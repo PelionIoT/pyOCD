@@ -55,7 +55,12 @@ class StlinkProbe(DebugProbe):
         for info in detector.list_mbeds():
             if info['target_id_usb_id'] == self._link.serial_number:
                 self._mbed_info = info
-                self._board_id = info['target_id_mbed_htm'][0:4]
+                # https://github.com/mbedmicro/pyOCD/issues/695
+                # self._board_id is not mandatory information for probe.
+                try:
+                    self._board_id = info['target_id_mbed_htm'][0:4]
+                except KeyError:
+                    pass
                 break
         
     @property
